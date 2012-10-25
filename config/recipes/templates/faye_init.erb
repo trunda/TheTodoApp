@@ -10,7 +10,6 @@
 ### END INIT INFO
 set -e
 # Feel free to change any of the following variables for your app:
-TIMEOUT=${TIMEOUT-60}
 APP_ROOT=<%= current_path %>
 PID=<%= faye_pid %>
 CMD="cd $APP_ROOT; bundle exec rackup -D -P $PID $APP_ROOT/config/faye.ru -s thin -E production"
