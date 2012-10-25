@@ -1,8 +1,8 @@
 class TheTodoApp.Libs.FayeSubscriber
-  rootUrl: 'http://localhost:9292/faye'
+  @rootUrl = null
 
   constructor: (@collection, @channel) ->
-    @client = new Faye.Client(@rootUrl)
+    @client = new Faye.Client(TheTodoApp.Libs.FayeSubscriberOptions.rootUrl)
     @subscribe()
 
   subscribe: ->
@@ -20,3 +20,6 @@ class TheTodoApp.Libs.FayeSubscriber
 
   destroy: (params) ->
     @collection.remove(@collection.get(id)) for id, attrs of params
+
+
+TheTodoApp.Libs.FayeSubscriberOptions = { rootUrl: 'http://localhost:9292/faye'}

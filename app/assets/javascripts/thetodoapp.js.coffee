@@ -12,7 +12,5 @@ window.TheTodoApp =
       Backbone.history.started = true
 
 $ ->
-  TheTodoApp.Libs.FayeSubscriber.rootUrl =
-    $('#container').data('fayeRootUrl') ||
-    TheTodoApp.Libs.FayeSubscriber.rootUrl
+  TheTodoApp.Libs.FayeSubscriberOptions.rootUrl = url if (url = $('#container').data('fayeRootUrl'))
   TheTodoApp.initialize({})
