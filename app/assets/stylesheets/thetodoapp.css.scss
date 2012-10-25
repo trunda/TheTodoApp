@@ -1,0 +1,43 @@
+// Place all the styles related to the tasks controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+@import "mixins";
+@import "bourbon";
+
+body {
+  background-color: #b9bcc3;
+  padding: 20px;
+}
+
+#tasks {
+  list-style-type: none;
+  margin: 5px;
+  padding: 0px;
+  li {
+    position: relative;
+    font-size: 12px;
+    @include gradient(#ffffff, #f3f3f3);
+    @include border-radius(2px);
+    padding: 5px;
+    margin-bottom: 2px;
+    &.ui-sortable-helper {
+      opacity: 0.5;
+    }
+    input[type=checkbox] {
+      margin: 0px;
+      padding: 0px;
+      margin-right: 10px;
+    }
+    &.selected {
+      @include gradient(#e6f0ff, #dbe5f4);
+    }
+    &.completed {
+      background-color: #d0d2d7;
+      background-image: none;
+      &.selected {
+        background-color: #bcc9db;
+      }
+    }
+  }
+}

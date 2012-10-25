@@ -1,0 +1,2 @@
+<input class="toggle" type="checkbox" <%= 'checked' if @task.get('completed') %>/>
+<%= @task.get('title') %>

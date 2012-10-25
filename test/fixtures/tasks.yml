@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  title: MyString
+  notes: MyText
+  due: 2012-10-22
+
+two:
+  title: MyString
+  notes: MyText
+  due: 2012-10-22

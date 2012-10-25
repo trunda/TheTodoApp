@@ -1,0 +1,7 @@
+<h1>TODO list</h1>
+<form id="add-task">
+  <input type="text" name="title" />
+  <input type="submit" value="Vložit" />
+</form>
+<ul id="tasks">
+</ul>
