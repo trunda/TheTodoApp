@@ -7,10 +7,12 @@ class TheTodoApp.Views.Task extends Backbone.View
     'click .toggle' : 'toggleTask'
 
   initialize: ->
-    @model.on('change', @render)
+    @model.on('change', (model, event) => @render() unless _.keys(event.changes).length is 1 and event.changes.position is true )
     @model.on('remove', @removeTask)
 
   render: =>
+    console.log "Rendering task id=#{@model.get('id')}"
+    classes = @$el.attr('class')
     @$el.html(@template(task: @model))
     if @model.get('completed') then @$el.addClass('completed') else @$el.removeClass('completed')
     this
