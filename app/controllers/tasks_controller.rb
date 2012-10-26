@@ -22,9 +22,7 @@ class TasksController < ApplicationController
   end
 
   def sort
-    params[:tasks].each do |key, item|
-      Task.update(item[:id], {:position => item[:position]})
-    end
+    Task.sort(params[:tasks])
     render nothing: true
   end
 
