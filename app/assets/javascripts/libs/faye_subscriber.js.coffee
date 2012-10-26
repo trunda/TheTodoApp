@@ -10,7 +10,8 @@ class TheTodoApp.Libs.FayeSubscriber
 
   receive: (message) =>
     console.log "Received push message", message
-    @[event](arguments) for event, arguments of message
+    for event, arguments of message
+      if @[event] then @[event](arguments) else @collection.trigger(event, arguments)
 
   update: (params) ->
     @collection.get(id).set(attrs) for id, attrs of params

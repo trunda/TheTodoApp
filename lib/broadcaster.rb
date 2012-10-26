@@ -1,8 +1,13 @@
 class Broadcaster < ActiveRecord::Observer
   # Observe all models
   Rails.application.eager_load! if not Rails.application.config.cache_classes
-  ActiveRecord::Base.subclasses.each do |cls|
-    observe cls if (cls.respond_to?(:broadcast?) && cls.send(:broadcast?)) || true
+  observe ActiveRecord::Base.subclasses.select { |cls| cls.respond_to?(:broadcast?) ? cls.send(:broadcast?) : true }
+
+  def initialize()
+    super
+    self.observed_classes.each do |cls|
+      cls.extend(Faye::ModelMehthods)
+    end
   end
 
   def self.observed_classes
@@ -10,27 +15,38 @@ class Broadcaster < ActiveRecord::Observer
   end
 
   def after_update(model)
-    broadcast(model, :update)
+    broadcast_event(model, :update)
   end
 
   def after_create(model)
-    broadcast(model, :create)
+    broadcast_event(model, :create)
   end
 
   def after_destroy(model)
-    broadcast(model, :destroy)
+    broadcast_event(model, :destroy)
   end
 
-  private
-    def broadcast(model, event)
-      subchannel = model.class.respond_to?(:broadcast_channel) ? model.send(:broadcast_channel) : model.class.table_name
-      message = {
-        :channel => "/sync/#{subchannel}",
-        :data => { event => { model.id => model.as_json } }
-      }
-      Rails.logger.info "Broadcasting #{message.inspect}"
-      uri = URI.parse("http://localhost:9292/faye")
-      Net::HTTP.post_form(uri, :message => message.to_json)
-    end
+  def broadcast(model, event, data)
+    model = model.class unless model.is_a?(Class)
+    subchannel = model.respond_to?(:broadcast_channel) ? model.send(:broadcast_channel) : model.table_name
+    message = {
+      :channel => "/sync/#{subchannel}",
+      :data => { event => data }
+    }
+    Rails.logger.info "Broadcasting #{message.inspect}"
+    uri = URI.parse("http://localhost:9292/faye")
+    Net::HTTP.post_form(uri, :message => message.to_json)
+  end
 
+  def broadcast_event(model, event)
+    broadcast(model, event, { model.id => model.as_json })
+  end
+end
+
+module Faye
+  module ModelMehthods
+    def broadcast(event, data)
+      Broadcaster.instance.broadcast(self, event, data)
+    end
+  end
 end
