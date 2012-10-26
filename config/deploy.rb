@@ -9,6 +9,7 @@ load "config/recipes/nodejs"
 load "config/recipes/rbenv"
 load "config/recipes/check"
 
+set :domain, "rails.trunecek.net"
 server "rails.trunecek.net", :web, :app, :db, primary: true
 
 set :application, "TheTodoApp"

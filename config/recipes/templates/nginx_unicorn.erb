@@ -3,6 +3,17 @@ upstream unicorn {
 }
 
 server {
+  server_name <%= application.downcase %>.<%= :domain %>;
+
+  if (-f $document_root/system/maintenance.html) {
+    return 503;
+  }
+  error_page 503 @maintenance;
+    location @maintenance {
+      rewrite  ^(.*)$  /system/maintenance.html last;
+      break;
+  }
+
   listen 80 default deferred;
   # server_name example.com;
   root <%= current_path %>/public;
@@ -21,7 +32,7 @@ server {
     proxy_pass http://unicorn;
   }
 
-  error_page 500 502 503 504 /500.html;
+  error_page 500 502 504 /500.html;
   client_max_body_size 4G;
   keepalive_timeout 10;
 }
