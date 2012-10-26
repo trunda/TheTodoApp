@@ -10,6 +10,5 @@ class TheTodoApp.Collections.Tasks extends Backbone.Collection
     -1 * model.get('position')
 
   saveOrder: () ->
-    @sort()
     data = @map((task) -> { id: task.get('id'), position: task.get('position') })
     $.post("#{@url}/sort", tasks: data)

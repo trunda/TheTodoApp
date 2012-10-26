@@ -4,25 +4,38 @@ class TheTodoApp.Views.TasksIndex extends Backbone.View
     'submit #add-task' : 'createTask'
     'click li': 'itemClicked'
 
+  initialize: ->
+    @taskViews = {}
+
   setCollection: (collection) ->
     @collection = collection
-    @collection.on('reset', @render)
     @collection.on('add', (task) => @addTask(task, false))
-    @collection.on('change:position', => @collection.sort(); @render)
+    @collection.on('reset', @render)
+    @collection.on('resort', @resort)
     @collection.on('remove', (model) => delete @taskViews[model.get('id')] )
     @render
 
   render: =>
+    console.log 'Tasks list rendering'
     $(document).off('keydown', @keydown).on('keydown', @keydown)
+
+    # remember selected item
+    for id, view of @taskViews
+      selected = view.model if @$('li.selected').is(view.$el)
+
     @taskViews = {}
     $(@el).html(@template())
+
+    # apply sortable
     @$('ul').sortable
       axis: 'y'
       update: @updateSort
       distance: 10
 
     @collection.each (task) =>
-      @addTask(task, true)
+      view = @addTask(task, true)
+      # apply selected, if this is selected model
+      view.$el.addClass('selected') if view.model is selected
 
     this
 
@@ -30,6 +43,7 @@ class TheTodoApp.Views.TasksIndex extends Backbone.View
     @taskViews[task.get('id')] = view = new TheTodoApp.Views.Task(model: task)
     method = if append then 'append' else 'prepend'
     @$('#tasks')[method](view.render().el)
+    view
 
   createTask: (event) =>
     event.preventDefault()
@@ -47,6 +61,11 @@ class TheTodoApp.Views.TasksIndex extends Backbone.View
   itemClicked: (event) =>
     $(event.target).parent().find('li').removeClass('selected');
     $(event.target).addClass('selected')
+
+  resort: (data) =>
+    for key, item of data
+      model.set('position', item.position) if model = @collection.get(item.id)
+    @collection.sort()
 
   # Podpora klávesnice
   keydown: (event) =>
